@@ -27,7 +27,7 @@ public class OptionPane extends JFrame {
         this.setTitle(title);
         messageArea.setText(message);
         JButton okButton = new JButton("OK");
-        buttonSettings(okButton);
+        buttonSettings(okButton, isDarkTheme);
         textAreaResize();
         okButton.addActionListener(e -> this.dispose());
         if (isDarkTheme) {
@@ -99,14 +99,31 @@ public class OptionPane extends JFrame {
         buttonsPanel.setBounds(0, 145, 450, 45);
     }
 
-    private void buttonSettings(JButton button) {
+    private void buttonSettings(JButton button, boolean isDarkTheme) {
         buttonsPanel.add(button);
         button.setHorizontalAlignment(SwingConstants.CENTER);
         button.setFocusable(false);
+        button.setBorder(BorderFactory.createEmptyBorder(7, 15, 7, 15));
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent e) {
+                if (isDarkTheme)
+                    button.setBackground(new Color(0x03132C));
+                else
+                    button.setBackground(new Color(0xECECFC));
+            }
+
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent e) {
+                if (isDarkTheme)
+                    button.setBackground(darkButtonBackground);
+                else
+                    button.setBackground(lightButtonBackground);
+            }
+        });
     }
 
     private void textAreaResize() {
-        System.out.println(countLines(messageArea));
         int linesCount = countLines(messageArea);
         linesCount += (messageArea.getLineCount() - 1);
         /*
