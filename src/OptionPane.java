@@ -195,6 +195,5 @@ public class OptionPane extends JFrame {
 
     private void blockUntilClosed() {
         while (isDisplayable()) {}
-        System.out.println("s");
     }
 }
