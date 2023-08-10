@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.font.LineBreakMeasurer;
 import java.awt.font.TextAttribute;
@@ -17,6 +19,7 @@ public class OptionPane extends JFrame {
     Color lightBackground;
     Color lightButtonBackground;
     Color lightButtonText;
+    int returnValue;
 
     protected OptionPane() {
         defaultSettings();
@@ -46,17 +49,48 @@ public class OptionPane extends JFrame {
             okButton.setBackground(lightButtonBackground);
             okButton.setForeground(lightButtonText);
         }
+        blockUntilClosed();
     }
 
-    protected int multiOption(boolean isDarkTheme, String title, String message, String[] choices) {
+    // choices return values between 0 (the first button) and choices.length-1 (the last button)
+    protected void multiOption(boolean isDarkTheme, String title, String message, String[] choices) {
         reUsableSettings();
-        /*new WindowAdapter() {
-            public void windowClosing(WindowEvent evt) {
-                Frame frame = (Frame) evt.getSource();
-                System.out.println("Closing = "+frame.getTitle());
+        this.setTitle(title);
+        messageArea.setText(message);
+        textAreaResize();
+
+        if (isDarkTheme) {
+            this.getContentPane().setBackground(darkBackground);
+            messageArea.setBackground(darkBackground);
+            messageArea.setForeground(Color.WHITE);
+            buttonsPanel.setBackground(darkBackground);
+        }
+        else {
+            this.getContentPane().setBackground(lightBackground);
+            messageArea.setBackground(lightBackground);
+            messageArea.setForeground(lightButtonText);
+            buttonsPanel.setBackground(lightBackground);
+        }
+
+        JButton[] buttons = new JButton[choices.length];
+        for (int i = 0; i < choices.length; i++) {
+            buttons[i] = new JButton(choices[i]);
+            buttonSettings(buttons[i], isDarkTheme);
+            if (isDarkTheme) {
+                buttons[i].setBackground(darkButtonBackground);
+                buttons[i].setForeground(darkButtonText);
             }
-        };*/
-        return 0;
+            else {
+                buttons[i].setBackground(lightButtonBackground);
+                buttons[i].setForeground(lightButtonText);
+            }
+            int finalI = i;
+            buttons[i].addActionListener(e -> {
+                returnValue = finalI;
+                this.dispose();
+            });
+        }
+        blockUntilClosed();
     }
 
     private void defaultSettings() {
@@ -157,5 +191,10 @@ public class OptionPane extends JFrame {
         }
 
         return noLines;
+    }
+
+    private void blockUntilClosed() {
+        while (isDisplayable()) {}
+        System.out.println("s");
     }
 }
